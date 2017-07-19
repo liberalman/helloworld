@@ -11,16 +11,17 @@ import (
 var ip string
 
 func handler(w http.ResponseWriter, r *http.Request) {
-        fmt.Fprintf(w, "<h1>Hi there, I love %s! I'm <font color=red>%s</font>. I have saw that you are %s.</h1>", r.URL.Path[1:], ip, r.RemoteAddr)
+        fmt.Fprintf(w, "<h1>Hello World! I'm %s. I saw that you are %s.</h1>", ip, r.RemoteAddr)
 }
 
 func main() {
+	ip = os.Getenv("MY_HOST")
 	cmd := exec.Command("sh", "-c", `ifconfig eth0 |grep inet|grep -v inet6|awk '{print $2}'`)
 	if out, err := cmd.Output(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	} else {
-		ip = strings.Trim(string(out), "\n")
+		ip = "<font color=blue>" + ip + "</font> <font color=red>" + strings.Trim(string(out), "\n") + "</font>"
 		fmt.Println(ip)
 	}
 	http.HandleFunc("/", handler)
